@@ -1,0 +1,29 @@
+document.getElementById('food-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const foodName = document.getElementById('food-input').value;
+
+    fetch('/get_food', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `food_name=${foodName}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            document.getElementById('food-details').innerHTML = `<p>Food not found.</p>`;
+        } else {
+            const details = `
+                <h2>${data.food_name}</h2>
+                <p>Calories: ${data.nutrition.calories}</p>
+                <p>Fat: ${data.nutrition.fat}g</p>
+                <p>Protein: ${data.nutrition.protein}g</p>
+                <p>Sugars: ${data.nutrition.sugars}g</p>
+                <p>Ingredients: ${data.ingredients}</p>
+            `;
+            document.getElementById('food-details').innerHTML = details;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
